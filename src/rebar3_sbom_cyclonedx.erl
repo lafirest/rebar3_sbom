@@ -9,8 +9,8 @@ bom(Components, Serial) ->
     Bom = {bom, [{serialNumber, Serial}, {xmlns, "http://cyclonedx.org/schema/bom/1.1"}], [
         {components, [], [component(Component) || Component <- Components, Component /= undefined]}
     ]},
-%%    xmerl:export_simple([Bom], xmerl_xml).
-    jsone:encode([Bom]).
+    xmerl:export_simple([Bom], xmerl_xml).
+
 
 component(Component) ->
     {component, [{type, "library"}],
