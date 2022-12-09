@@ -10,7 +10,7 @@ bom(Components, Serial) ->
         {components, [], [component(Component) || Component <- Components, Component /= undefined]}
     ]},
 %%    xmerl:export_simple([Bom], xmerl_xml).
-    jsone:encode(Bom).
+    jsone:encode([Bom]).
 
 component(Component) ->
     {component, [{type, "library"}],
