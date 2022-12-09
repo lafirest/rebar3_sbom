@@ -34,7 +34,7 @@ do(State) ->
     Force = proplists:get_value(force, Args),
     Deps = rebar_state:all_deps(State),
     DepsInfo = [dep_info(Dep) || Dep <- Deps],
-    Xml = rebar3_sbom_cyclonedx:bom(DepsInfo),
+    Xml = rebar3_sbom_cyclonedx:bom(Output, DepsInfo),
     case write_file(Output, Xml, Force) of
         ok ->
             rebar_api:info("CycloneDX SBoM written to ~s", [Output]),
@@ -59,6 +59,7 @@ dep_info(_Name, _Version, {pkg, Name, Version, Sha256}, _Dir, Details) ->
     [
         {name, Name},
         {version, Version},
+        {author, proplists:get_value(maintainers, Details)},
         {description, proplists:get_value(description, Details)},
         {licenses, proplists:get_value(licenses, Details)},
         {purl, rebar3_sbom_purl:hex(Name, Version)},
@@ -69,6 +70,7 @@ dep_info(_Name, _Version, {pkg, Name, Version, _InnerChecksum, OuterChecksum, _R
     [
         {name, Name},
         {version, Version},
+        {author, proplists:get_value(maintainers, Details)},
         {description, proplists:get_value(description, Details)},
         {licenses, proplists:get_value(licenses, Details)},
         {purl, rebar3_sbom_purl:hex(Name, Version)},
@@ -79,6 +81,7 @@ dep_info(Name, _Version, {git, Git, {tag, Tag}}, _Dir, Details) ->
     [
         {name, Name},
         {version, Tag},
+        {author, proplists:get_value(maintainers, Details)},
         {description, proplists:get_value(description, Details)},
         {licenses, proplists:get_value(licenses, Details)},
         {purl, rebar3_sbom_purl:git(Name, Git, Tag)}
@@ -88,6 +91,7 @@ dep_info(Name, Version, {git, Git, {ref, Ref}}, _Dir, Details) ->
     [
         {name, Name},
         {version, Version},
+        {author, proplists:get_value(maintainers, Details)},
         {description, proplists:get_value(description, Details)},
         {licenses, proplists:get_value(licenses, Details)},
         {purl, rebar3_sbom_purl:git(Name, Git, Ref)}
