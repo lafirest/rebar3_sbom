@@ -78,7 +78,8 @@ get_version(File) ->
 dependency(Component) ->
     Ref = bom_ref_of_component(Component),
     Deps = proplists:get_value(dependencies, Component),
-    {dependency, [{ref, [Ref]}], [dependsOn(Dep) || Dep <- Deps]}.
+%%    {dependency, [{ref, [Ref]}], [dependsOn(Dep) || Dep <- Deps]}.
+    {dependency, [{ref, [Ref]}], []}.
 
 dependsOn(Name) ->
     Ref = bom_ref_name(component, Name),
