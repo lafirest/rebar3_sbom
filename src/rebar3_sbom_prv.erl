@@ -54,6 +54,7 @@ dep_info(Dep) ->
     Dir = rebar_app_info:dir(Dep),
     Details = rebar_app_info:app_details(Dep),
     Deps = rebar_app_info:deps(Dep),
+    io:format(">>> Deps:~p~n", [Deps]),
     dep_info(Name, Version, Source, Dir, Details, Deps).
 
 dep_info(_Name, _Version, {pkg, Name, Version, Sha256}, _Dir, Details, Deps) ->
