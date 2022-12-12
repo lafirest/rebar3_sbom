@@ -81,10 +81,12 @@ dependency(Component) ->
     {dependency, [{ref, [Ref]}], [dependsOn(Dep) || Dep <- Deps]}.
 
 dependsOn(Name) ->
-    io:format(">>> Name is:~p~n", [Name]),
-    Ref = bom_ref_of_component(Name),
+    Ref = bom_ref_name(component, Name),
     {dependency, [{ref, [Ref]}], undefined}.
 
 bom_ref_of_component(Component) ->
     Name = proplists:get_value(name, Component),
-    io_lib:format("ref_component_~ts", [Name]).
+    bom_ref_name(component, Name).
+
+bom_ref_name(Type, Name) ->
+    io_lib:format("ref_~ts_~ts", [Type, Name]).
