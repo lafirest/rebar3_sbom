@@ -53,7 +53,7 @@ dep_info(Dep) ->
     Source = rebar_app_info:source(Dep),
     Dir = rebar_app_info:dir(Dep),
     Details = rebar_app_info:app_details(Dep),
-    Deps = rebar3_app_info:deps(Dep),
+    Deps = rebar_app_info:deps(Dep),
     dep_info(Name, Version, Source, Dir, Details, Deps).
 
 dep_info(_Name, _Version, {pkg, Name, Version, Sha256}, _Dir, Details, Deps) ->
