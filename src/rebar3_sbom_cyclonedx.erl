@@ -3,6 +3,7 @@
 -export([bom/2, bom/3, uuid/0]).
 
 -define(APP, "rebar3_sbom").
+-define(COMPONENT_FIELDS, [name, version, author, description, licenses, purl, sha256]).
 
 -include_lib("xmerl/include/xmerl.hrl").
 
@@ -25,7 +26,8 @@ metadata() ->
 
 component(Component) ->
     {component, [{type, "library"}, {'bom-ref', bom_ref_of_component(Component)}],
-        [component_field(Field, Value) || {Field, Value} <- Component, Value /= undefined]}.
+        [component_field(Field, Value)
+         || {Field, Value} <- Component, lists:member(Field, ?COMPONENT_FIELDS), Value /= undefined]}.
 
 component_field(name, Name) -> {name, [], [[Name]]};
 component_field(version, Version) -> {version, [], [[Version]]};
