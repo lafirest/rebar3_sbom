@@ -89,4 +89,4 @@ bom_ref_of_component(Component) ->
     bom_ref_name(component, Name).
 
 bom_ref_name(Type, Name) ->
-    io_lib:format("ref_~ts_~ts", [Type, Name]).
+    lists:flatten(io_lib:format("ref_~ts_~ts", [Type, Name])).
