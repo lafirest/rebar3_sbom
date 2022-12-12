@@ -23,7 +23,7 @@ metadata() ->
     ].
 
 component(Component) ->
-    {component, [{type, "library"}],
+    {component, [{type, "library"}, {'bom-ref', bom_ref_of_component(Component)}],
         [component_field(Field, Value) || {Field, Value} <- Component, Value /= undefined]}.
 
 component_field(name, Name) -> {name, [], [[Name]]};
@@ -71,3 +71,7 @@ get_version(File) ->
                          [File, Reason]),
             "1"
     end.
+
+bom_ref_of_component(Component) ->
+    Name = proplists:get_value(name, Component),
+    io_lib:format("ref_component_~ts", [Name]).
