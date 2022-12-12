@@ -13,7 +13,8 @@ bom(File, Components, Serial) ->
     Bom = {bom, [{version, [get_version(File)]}, {serialNumber, Serial}, {xmlns, "http://cyclonedx.org/schema/bom/1.1"}], [
         {metadata, metadata()},
         {components, [], [component(Component) || Component <- Components, Component /= undefined]}
-    ]},
+    ],
+        {dependencies, [], [dependency(Component) || Component <- Components, Components /= undefined]}},
     xmerl:export_simple([Bom], xmerl_xml).
 
 metadata() ->
@@ -71,6 +72,16 @@ get_version(File) ->
                          [File, Reason]),
             "1"
     end.
+
+dependency(Component) ->
+    Ref = bom_ref_of_component(Component),
+    Deps = proplists:get_value(dependencies, Component),
+    {dependency, [{ref, [Ref]}], [dependsOn(Dep) || Dep <- Deps]}.
+
+dependsOn(Name) ->
+    io:format(">>> Name is:~p~n", [Name]),
+    Ref = bom_ref_of_component(Name),
+    {dependency, [{ref, [Ref]}], undefined}.
 
 bom_ref_of_component(Component) ->
     Name = proplists:get_value(name, Component),

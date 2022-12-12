@@ -53,9 +53,10 @@ dep_info(Dep) ->
     Source = rebar_app_info:source(Dep),
     Dir = rebar_app_info:dir(Dep),
     Details = rebar_app_info:app_details(Dep),
-    dep_info(Name, Version, Source, Dir, Details).
+    Deps = rebar3_app_info:deps(Dep),
+    dep_info(Name, Version, Source, Dir, Details, Deps).
 
-dep_info(_Name, _Version, {pkg, Name, Version, Sha256}, _Dir, Details) ->
+dep_info(_Name, _Version, {pkg, Name, Version, Sha256}, _Dir, Details, Deps) ->
     [
         {name, Name},
         {version, Version},
@@ -63,10 +64,11 @@ dep_info(_Name, _Version, {pkg, Name, Version, Sha256}, _Dir, Details) ->
         {description, proplists:get_value(description, Details)},
         {licenses, proplists:get_value(licenses, Details)},
         {purl, rebar3_sbom_purl:hex(Name, Version)},
-        {sha256, string:lowercase(Sha256)}
+        {sha256, string:lowercase(Sha256)},
+        {dependencies, Deps}
     ];
 
-dep_info(_Name, _Version, {pkg, Name, Version, _InnerChecksum, OuterChecksum, _RepoConfig}, _Dir, Details) ->
+dep_info(_Name, _Version, {pkg, Name, Version, _InnerChecksum, OuterChecksum, _RepoConfig}, _Dir, Details, Deps) ->
     [
         {name, Name},
         {version, Version},
@@ -74,30 +76,33 @@ dep_info(_Name, _Version, {pkg, Name, Version, _InnerChecksum, OuterChecksum, _R
         {description, proplists:get_value(description, Details)},
         {licenses, proplists:get_value(licenses, Details)},
         {purl, rebar3_sbom_purl:hex(Name, Version)},
-        {sha256, string:lowercase(OuterChecksum)}
+        {sha256, string:lowercase(OuterChecksum)},
+        {dependencies, Deps}
     ];
 
-dep_info(Name, _Version, {git, Git, {tag, Tag}}, _Dir, Details) ->
+dep_info(Name, _Version, {git, Git, {tag, Tag}}, _Dir, Details, Deps) ->
     [
         {name, Name},
         {version, Tag},
         {author, proplists:get_value(maintainers, Details)},
         {description, proplists:get_value(description, Details)},
         {licenses, proplists:get_value(licenses, Details)},
-        {purl, rebar3_sbom_purl:git(Name, Git, Tag)}
+        {purl, rebar3_sbom_purl:git(Name, Git, Tag)},
+        {dependencies, Deps}
     ];
 
-dep_info(Name, Version, {git, Git, {ref, Ref}}, _Dir, Details) ->
+dep_info(Name, Version, {git, Git, {ref, Ref}}, _Dir, Details, Deps) ->
     [
         {name, Name},
         {version, Version},
         {author, proplists:get_value(maintainers, Details)},
         {description, proplists:get_value(description, Details)},
         {licenses, proplists:get_value(licenses, Details)},
-        {purl, rebar3_sbom_purl:git(Name, Git, Ref)}
+        {purl, rebar3_sbom_purl:git(Name, Git, Ref)},
+        {dependencies, Deps}
     ];
 
-dep_info(_Name, _Version, _Source, _Dir, _Details) ->
+dep_info(_Name, _Version, _Source, _Dir, _Details, _Deps) ->
     undefined.
 
 write_file(Filename, Xml, true) ->
