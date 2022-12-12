@@ -13,9 +13,8 @@ bom(File, Components) ->
 bom(File, Components, Serial) ->
     Bom = {bom, [{version, [get_version(File)]}, {serialNumber, Serial}, {xmlns, "http://cyclonedx.org/schema/bom/1.1"}], [
         {metadata, metadata()},
-        {components, [], [component(Component) || Component <- Components, Component /= undefined]}
-    ],
-        {dependencies, [], [dependency(Component) || Component <- Components, Components /= undefined]}},
+        {components, [], [component(Component) || Component <- Components, Component /= undefined]},
+        {dependencies, [], [dependency(Component) || Component <- Components, Components /= undefined]}]},
     xmerl:export_simple([Bom], xmerl_xml).
 
 metadata() ->
@@ -77,17 +76,9 @@ get_version(File) ->
 
 dependency(Component) ->
     Ref = bom_ref_of_component(Component),
-    Deps = proplists:get_value(dependencies, Component),
-%%    {dependency, [{ref, [Ref]}], [dependsOn(Dep) || Dep <- Deps]}.
-    {dependency, [{ref, [Ref]}], []}.
-
-dependsOn(Name) ->
-    Ref = bom_ref_name(component, Name),
-    {dependency, [{ref, [Ref]}], []}.
+    Deps = proplists:get_value(dependencies, Component, []),
+    {dependency, [{ref, [Ref]}], [dependency([{name, Dep}]) || Dep <- Deps]}.
 
 bom_ref_of_component(Component) ->
     Name = proplists:get_value(name, Component),
-    bom_ref_name(component, Name).
-
-bom_ref_name(Type, Name) ->
-    lists:flatten(io_lib:format("ref_~ts_~ts", [Type, Name])).
+    lists:flatten(io_lib:format("ref_component_~ts", [Name])).
