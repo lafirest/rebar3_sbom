@@ -82,7 +82,7 @@ dependency(Component) ->
 
 dependsOn(Name) ->
     Ref = bom_ref_name(component, Name),
-    {dependency, [{ref, [Ref]}], undefined}.
+    {dependency, [{ref, [Ref]}], []}.
 
 bom_ref_of_component(Component) ->
     Name = proplists:get_value(name, Component),
